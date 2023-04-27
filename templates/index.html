@@ -4,47 +4,55 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Venus Template</title>
+    <title>x-rai</title>
     <link href="https://fonts.googleapis.com/css?family=Heebo:400,700|Oxygen:700" rel="stylesheet">
     <link rel="stylesheet" href="../static/dist/css/style-old.css">
     <script src="https://unpkg.com/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
-        <style>
-            body, html {
-                height: 100%;
-                margin: 0;
-            }
+    <style>
+        .is-boxed {
+            background: #0b0d19;
+        }
 
-            .body-wrap {
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-            }
+        body, html {
+          height: auto;
+          margin: 0;
+          overflow-y: scroll;
+        }
 
-            .site-header {
-                flex-grow: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
+        .body-wrap {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
 
+        .site-header {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-                .hero {
-                    padding-top: 160px;
-                    padding-bottom: 1px;
-                    background: #0c0d19;
-                }
+        .hero {
+            padding-top: 160px;
+            padding-bottom: 1px;
+            background: #0c0d19;
+        }
 
-                .hero-copy {
-                    margin-bottom: 250px;
-                }
+        .hero-copy {
+            margin-bottom: 250px;
+        }
 
-                .section-inner {
-                    padding-top: 0px;
-                    padding-bottom: 88px;
-                    margin-top: 390px;
-                }
+        .section-inner {
+            padding-top: 0px;
+            padding-bottom: 88px;
+            margin-top: 390px;
+        }
 
-        </style>
+        img {
+            width: 50%;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 
 <body class="is-boxed has-animations">
@@ -75,10 +83,26 @@
                             <h1 class="hero-title mt-0">X-RAI</h1>
                             <p class="hero-paragraph">Our X-Ray Ai takes in an image and outputs relavant details regarding your inputted image. This saves time and resources spent on a Radiologist.</p>
                             <div class="hero-cta">
+                                <!-- Results html -->
+                                <div id="result-container" style="display: none;">
+                                  <img id="uploaded-image" src="" alt="Uploaded X-ray" style="max-width: 100%; margin-top: 20px;">
+                                  <div id="image-info" style="margin-top: 20px;"></div>
+                                  <div class="hero-cta" style="margin-top: 20px;">
+                                    <label for="xray_image" class="button button-primary button-wide-mobile" id="reupload_button">Re-Upload an X-RAI</label>
+                                  </div>
+                                  <div class="progress" style="height: 10px; margin-top: 20px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                  </div>
+                                </div>
+
                               <form id="upload-form" enctype="multipart/form-data">
-                                <input type="file" name="xray_image" id="xray_image" accept="image/*" style="display:none;">
-                                <label for="xray_image" class="button button-primary button-wide-mobile" id="upload_button">Upload an X-RAI</label>
+                                  <input type="file" name="xray_image" id="xray_image" accept="image/*" style="display:none;">
+                                  <label for="xray_image" class="button button-primary button-wide-mobile" id="upload_button">Upload an X-RAI</label>
+                                  <div class="progress" style="height: 10px; margin-top: 20px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                  </div>
                               </form>
+
                             </div>
 
                         </div>
@@ -111,38 +135,75 @@
             </div>
         </footer>
 
+
     </div>
     <script src="../static/dist/js/main.min.js"></script>
     <script>
-      function triggerFileInput() {
-        document.querySelector('#xray_image').click();
-      }
+          document.querySelector('#xray_image').addEventListener('change', function (event) {
+              const file = event.target.files[0]
+              if (file) {
+                const formData = new FormData()
+                formData.append('xray_image', file)
 
-      document.querySelector('#upload_button').addEventListener('click', triggerFileInput);
+                fetch('/api/analyze', {
+                  method: 'POST',
+                  body: formData,
+                  onUploadProgress: function(progressEvent) {
+                    var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    var progressBar = document.querySelector('.progress-bar');
+                    progressBar.style.width = percentCompleted + '%';
+                    progressBar.setAttribute('aria-valuenow', percentCompleted);
+                    progressBar.innerHTML = percentCompleted + '%';
+                  }
+                })
 
-      document.querySelector('#xray_image').addEventListener('change', function (event) {
-        const file = event.target.files[0]
-        if (file) {
-          const formData = new FormData()
-          formData.append('xray_image', file)
 
-          fetch('/api/analyze', {  // Updated the fetch URL to a relative path
-            method: 'POST',
-            body: formData
-          })
-            .then(response => response.json())
-            .then(data => {
-              if (data.result) {
-                alert(`Result: ${data.result}`)
-              } else {
-                alert(`Error: ${data.error}`)
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error)
-            })
-        }
-      });
+                  .then(response => response.json())
+                  .then(data => {
+                    if (data.result) {
+                      // Hide the upload button
+                      document.querySelector('#upload_button').style.display = 'none';
+
+                      // Display the result container
+                      document.querySelector('#result-container').style.display = 'block';
+
+                      // Display the uploaded image
+                      const image = document.querySelector('#uploaded-image');
+                      const imageURL = URL.createObjectURL(file);
+                      image.src = imageURL;
+
+                      // Display the information
+                      const info = document.querySelector('#image-info');
+                      info.innerHTML = `
+                        Pathological Condition: ${data.result.condition} (${data.result.description})<br>
+                        Gender: ${data.result.gender}<br>
+                        Age: ${data.result.age}<br>
+                        Viewing position: ${data.result.viewing_position}
+                      `;
+
+                      // Show the re-upload button
+                      document.querySelector('#reupload_button').style.display = 'block';
+                            } else {
+                              alert(`Error: ${data.error}`);
+                            }
+                          })
+                      }
+                    });
+
+                    // Handle the click event on the "Re-Upload" button
+                    document.querySelector('#reupload_button').addEventListener('click', function () {
+                      // Reset the input element
+                      document.querySelector('#xray_image').value = '';
+
+                      // Hide the result container
+                      document.querySelector('#result-container').style.display = 'none';
+
+                      // Hide the re-upload button
+                      document.querySelector('#reupload_button').style.display = 'none';
+
+                      // Show the upload button
+                      document.querySelector('#upload_button').style.display = 'block';
+                    });
     </script>
 </body>
 </html>

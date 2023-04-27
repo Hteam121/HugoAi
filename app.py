@@ -24,9 +24,16 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 model_path = Path('models/pathological_model_3810_v1.pkl')
-learn_inf = load_learner(model_path)
+patho_model = load_learner(model_path)
 
-# model = pickle.load(open('models/pathological_model_3810_v1.pkl', 'rb'))
+model_path = Path('models/gender_classifier.pkl')
+gender_model = load_learner(model_path)
+
+model_path = Path('models/ageClassifier.pkl')
+age_model = load_learner(model_path)
+
+model_path = Path('models/view_classifier.pkl')
+viewing_model = load_learner(model_path)
 
 
 def allowed_file(filename):
@@ -52,33 +59,39 @@ def analyze():
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        # Run your model on the uploaded image
+        # Run your models on the uploaded image
         img_path = Path('uploads/')
-        img = Image.open(img_path / filename)
-        img.show()
+        img = Image.open(img_path / filename).convert('RGB')
 
-        preds, _, probs = learn_inf.predict(img)
+        # Pathological condition prediction
+        patho_preds, _, patho_probs = patho_model.predict(img)
+        patho_prediction = len(patho_preds)
 
-        prediction = "Code hasn't saved"
-        for i, (label, prob) in enumerate(zip(learn_inf.dls.vocab, probs)):
-            prediction += f"{label}: {prob:.4f}"
+        # Gender prediction
+        gender_preds, _, gender_probs = gender_model.predict(img)
+        gender_prediction = gender_preds[0]
 
-        # Replace this line with the actual prediction
-        # prediction = "Your model's prediction"
-        print(prediction)
+        # Age prediction
+        age_preds, _, age_probs = age_model.predict(img)
+        age_prediction = age_preds[0]
 
-        # Data
-        labels = learn_inf.dls.vocab
-        sizes = [prob.item() for prob in probs]
+        # Viewing position prediction
+        viewing_preds, _, viewing_probs = viewing_model.predict(img)
+        viewing_prediction = viewing_preds[0]
 
-        # Filter data to include only values above
-        filtered_labels = [label for label, size in zip(labels, sizes) if size < 0.3]
-        filtered_sizes = [size for size in sizes if size < 0.3]
-
-        return jsonify({'result': prediction})
+        # Return the results as a JSON object
+        return jsonify({
+            'result': {
+                'condition': patho_prediction,
+                'gender': gender_prediction,
+                'age': age_prediction,
+                'viewing_position': viewing_prediction
+            }
+        })
 
     return jsonify({'error': 'Invalid file type'}), 400
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)
+    # app.run(host="0.0.0.0", port=5000)
