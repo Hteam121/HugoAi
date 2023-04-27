@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Venus Template</title>
+    <link href="https://fonts.googleapis.com/css?family=Heebo:400,700|Oxygen:700" rel="stylesheet">
+    <link rel="stylesheet" href="../static/dist/css/style-old.css">
+    <script src="https://unpkg.com/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+        <style>
+            body, html {
+                height: 100%;
+                margin: 0;
+            }
+
+            .body-wrap {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .site-header {
+                flex-grow: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+
+                .hero {
+                    padding-top: 160px;
+                    padding-bottom: 1px;
+                    background: #0c0d19;
+                }
+
+                .hero-copy {
+                    margin-bottom: 250px;
+                }
+
+                .section-inner {
+                    padding-top: 0px;
+                    padding-bottom: 88px;
+                    margin-top: 390px;
+                }
+
+        </style>
+</head>
+
+<body class="is-boxed has-animations">
+    <div class="body-wrap boxed-container">
+        <header class="site-header text-light">
+            <div class="container">
+                <div class="site-header-inner">
+                    <div class="brand header-brand">
+                        <h1 class="m-0">
+                            <a href="#">
+                                <img class="header-logo-image" src="../static/dist/images/logo.svg" alt="Logo">
+                            </a>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero text-center text-light">
+                <div class="hero-bg"></div>
+                <div class="hero-particles-container">
+                    <canvas id="hero-particles"></canvas>
+                </div>
+                <div class="container-sm">
+                    <div class="hero-inner">
+                        <div class="hero-copy">
+                            <h1 class="hero-title mt-0">X-RAI</h1>
+                            <p class="hero-paragraph">Our X-Ray Ai takes in an image and outputs relavant details regarding your inputted image. This saves time and resources spent on a Radiologist.</p>
+                            <div class="hero-cta">
+                              <form id="upload-form" enctype="multipart/form-data">
+                                <input type="file" name="xray_image" id="xray_image" accept="image/*" style="display:none;">
+                                <label for="xray_image" class="button button-primary button-wide-mobile" id="upload_button">Upload an X-RAI</label>
+                              </form>
+                            </div>
+
+                        </div>
+                        <div class="mockup-container">
+                            <div class="mockup-bg">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-particles-container">
+                <canvas id="footer-particles"></canvas>
+            </div>
+            <div class="site-footer-top">
+                <section class="cta section text-light">
+                                        <div class="container-sm">
+                        <div class="cta-inner section-inner">
+                            <div class="cta-header text-center">
+                                <!--  <h2 class="section-title mt-0">What is our project?</h2> -->
+                                <!--<p class="section-paragraph">Lorem ipsum is common placeholder text used to demonstrate the graphic elements of a document or visual presentation.</p> -->
+                                <!--    <a class="button button-primary button-wide-mobile" href="#">Get early access</a> -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </footer>
+
+    </div>
+    <script src="../static/dist/js/main.min.js"></script>
+    <script>
+      function triggerFileInput() {
+        document.querySelector('#xray_image').click();
+      }
+
+      document.querySelector('#upload_button').addEventListener('click', triggerFileInput);
+
+      document.querySelector('#xray_image').addEventListener('change', function (event) {
+        const file = event.target.files[0]
+        if (file) {
+          const formData = new FormData()
+          formData.append('xray_image', file)
+
+          fetch('/api/analyze', {  // Updated the fetch URL to a relative path
+            method: 'POST',
+            body: formData
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.result) {
+                alert(`Result: ${data.result}`)
+              } else {
+                alert(`Error: ${data.error}`)
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error)
+            })
+        }
+      });
+    </script>
+</body>
+</html>
