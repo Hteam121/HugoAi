@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>x-rai</title>
+    <title>HugoAi.cc</title>
     <link href="https://fonts.googleapis.com/css?family=Heebo:400,700|Oxygen:700" rel="stylesheet">
     <link rel="stylesheet" href="../static/dist/css/style-old.css">
     <script src="https://unpkg.com/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
@@ -13,10 +13,68 @@
             background: #0b0d19;
         }
 
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+            opacity: 0;
+        }
+
+        .hugo-acronym {
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .disclaimer {
+            margin-top: 5px;
+            animation: fadeIn 4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .result-text {
+        {#font-size: 1.5em; /* You can adjust the size as needed */#} color: white;
+        }
+
+        #loading-bar {
+            /* display: none; */
+        }
+
+        .hero-cta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        @media screen and (max-width: 767px) {
+            .drag-drop-zone {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 4em;
+                padding-bottom: 5px;
+            }
+
+            .hugo-acronym {
+                animation: fadeIn 2s ease-in-out;
+            }
+
+            .disclaimer {
+                margin-top: 7px;
+                animation: fadeIn 4s ease-in-out;
+            }
+        }
+
         body, html {
-          height: auto;
-          margin: 0;
-          overflow-y: scroll;
+            height: auto;
+            margin: 0;
+            overflow-y: scroll;
         }
 
         .body-wrap {
@@ -52,158 +110,261 @@
             width: 50%;
             margin: 0 auto;
         }
+
+        .drag-drop-zone {
+            border: 2px dashed #fff;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .drag-drop-zone.drag-over {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .button {
+            margin-top: 30px;
+        }
     </style>
 </head>
 
 <body class="is-boxed has-animations">
-    <div class="body-wrap boxed-container">
-        <header class="site-header text-light">
-            <div class="container">
-                <div class="site-header-inner">
-                    <div class="brand header-brand">
-                        <h1 class="m-0">
-                            <a href="#">
-                                <img class="header-logo-image" src="../static/dist/images/logo.svg" alt="Logo">
-                            </a>
-                        </h1>
+<div class="body-wrap boxed-container">
+    <header class="site-header text-light">
+        <div class="container">
+            <div class="site-header-inner">
+                <div class="brand header-brand">
+                    <h1 class="m-0">
+                        <a href="#">
+                            <img class="header-logo-image" src="../static/dist/images/logo.svg" alt="Logo">
+                        </a>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero text-center text-light">
+            <div class="hero-bg"></div>
+            <div class="hero-particles-container">
+                <canvas id="hero-particles"></canvas>
+            </div>
+            <div class="container-sm">
+                <div class="hero-inner">
+                    <div class="hero-copy">
+                        <h1 class="hero-title mt-0">HugoAi</h1>
+                        <h3 class="hugo-acronym"><span style="font-weight: bold">H</span>ealthcare <span
+                                style="font-weight: bold">U</span>tility for <span style="font-weight: bold">G</span>uided
+                            <span style="font-weight: bold">O</span>utcomes</h3>
+                        <h6 class="hero-paragraph">Our X-Ray AI system analyzes images and provides relevant details,
+                            streamlining the diagnostic process and potentially reducing the need for extensive
+                            involvement from a radiologist. By automating certain tasks, our AI system can save time and
+                            resources in the medical field.</h6>
+                        <p class="disclaimer">This product only works with chest x-rays</p>
+                        <div class="hero-cta">
+
+                            <div id="loading-bar" style="display: none;">
+                                <div class="progress" style="height: 10px; margin-top: 20px;">
+                                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;"
+                                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                            <!-- Results html -->
+                            <div id="result-container" class="fade-in" style="display: none;">
+                                <img id="uploaded-image" src="" alt="Uploaded X-ray"
+                                     style="max-width: 100%; margin-top: 20px;">
+                                <div id="image-info" style="margin-top: 20px;"></div>
+                                <div class="hero-cta text-center" style="margin-top: 20px;">
+                                    <label for="xray_image" class="button button-primary button-wide-mobile"
+                                           id="reupload_button">Re-Upload an X-ray</label>
+                                </div>
+
+                                <div class="progress" style="height: 10px; margin-top: 20px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                            <form id="upload-form" enctype="multipart/form-data">
+                                <input type="file" name="xray_image" id="xray_image" accept="image/*"
+                                       style="display:none;">
+                                <label for="xray_image" class="button button-primary button-wide-mobile"
+                                       id="upload_button">Upload an X-ray</label>
+                                <div class="progress" style="height: 10px; margin-top: 20px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </form>
+
+                            <div class="drag-drop-zone">
+                                <p>Or drag and drop your X-ray image here</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mockup-container">
+                        <div class="mockup-bg">
+                        </div>
+
                     </div>
                 </div>
             </div>
-        </header>
+        </section>
+    </main>
 
-        <main>
-            <section class="hero text-center text-light">
-                <div class="hero-bg"></div>
-                <div class="hero-particles-container">
-                    <canvas id="hero-particles"></canvas>
-                </div>
+    <footer class="site-footer">
+        <div class="footer-particles-container">
+            <canvas id="footer-particles"></canvas>
+        </div>
+        <div class="site-footer-top">
+            <section class="cta section text-light">
                 <div class="container-sm">
-                    <div class="hero-inner">
-                        <div class="hero-copy">
-                            <h1 class="hero-title mt-0">X-RAI</h1>
-                            <p class="hero-paragraph">Our X-Ray Ai takes in an image and outputs relavant details regarding your inputted image. This saves time and resources spent on a Radiologist.</p>
-                            <div class="hero-cta">
-                                <!-- Results html -->
-                                <div id="result-container" style="display: none;">
-                                  <img id="uploaded-image" src="" alt="Uploaded X-ray" style="max-width: 100%; margin-top: 20px;">
-                                  <div id="image-info" style="margin-top: 20px;"></div>
-                                  <div class="hero-cta" style="margin-top: 20px;">
-                                    <label for="xray_image" class="button button-primary button-wide-mobile" id="reupload_button">Re-Upload an X-RAI</label>
-                                  </div>
-                                  <div class="progress" style="height: 10px; margin-top: 20px;">
-                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                  </div>
-                                </div>
-
-                              <form id="upload-form" enctype="multipart/form-data">
-                                  <input type="file" name="xray_image" id="xray_image" accept="image/*" style="display:none;">
-                                  <label for="xray_image" class="button button-primary button-wide-mobile" id="upload_button">Upload an X-RAI</label>
-                                  <div class="progress" style="height: 10px; margin-top: 20px;">
-                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                  </div>
-                              </form>
-
-                            </div>
-
-                        </div>
-                        <div class="mockup-container">
-                            <div class="mockup-bg">
-                            </div>
-
+                    <div class="cta-inner section-inner">
+                        <div class="cta-header text-center">
+                            <!--  <h2 class="section-title mt-0">What is our project?</h2> -->
+                            <!--<p class="section-paragraph">Lorem ipsum is common placeholder text used to demonstrate the graphic elements of a document or visual presentation.</p> -->
+                            <!--    <a class="button button-primary button-wide-mobile" href="#">Get early access</a> -->
                         </div>
                     </div>
                 </div>
             </section>
-        </main>
-
-        <footer class="site-footer">
-            <div class="footer-particles-container">
-                <canvas id="footer-particles"></canvas>
-            </div>
-            <div class="site-footer-top">
-                <section class="cta section text-light">
-                                        <div class="container-sm">
-                        <div class="cta-inner section-inner">
-                            <div class="cta-header text-center">
-                                <!--  <h2 class="section-title mt-0">What is our project?</h2> -->
-                                <!--<p class="section-paragraph">Lorem ipsum is common placeholder text used to demonstrate the graphic elements of a document or visual presentation.</p> -->
-                                <!--    <a class="button button-primary button-wide-mobile" href="#">Get early access</a> -->
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </footer>
+        </div>
+    </footer>
 
 
-    </div>
-    <script src="../static/dist/js/main.min.js"></script>
-    <script>
-          document.querySelector('#xray_image').addEventListener('change', function (event) {
-              const file = event.target.files[0]
-              if (file) {
-                const formData = new FormData()
-                formData.append('xray_image', file)
+</div>
+<script src="../static/dist/js/main.min.js"></script>
+<script>
+    document.querySelector('#xray_image').addEventListener('change', handleFileUpload);
 
-                fetch('/api/analyze', {
-                  method: 'POST',
-                  body: formData,
-                  onUploadProgress: function(progressEvent) {
-                    var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    var progressBar = document.querySelector('.progress-bar');
-                    progressBar.style.width = percentCompleted + '%';
-                    progressBar.setAttribute('aria-valuenow', percentCompleted);
-                    progressBar.innerHTML = percentCompleted + '%';
-                  }
-                })
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('xray_image', file);
+            const loadingBar = document.querySelector('#loading-bar');
+            const progressBar = document.querySelector('#progress-bar');
+            loadingBar.style.display = 'block';
+            progressBar.style.width = '0%';
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api/analyze');
+            xhr.upload.addEventListener('progress', (event) => {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    progressBar.style.width = percentComplete + '%';
+                }
+            });
+            xhr.addEventListener('load', () => {
+                const data = JSON.parse(xhr.responseText);
+                if (data.result) {
+                    const progressInterval = setInterval(() => {
+                        if (progressBar.style.width !== '100%') {
+                            progressBar.style.width = parseInt(progressBar.style.width, 10) + 10 + '%';
+                        } else {
+                            clearInterval(progressInterval);
+                            loadingBar.style.display = 'none';
+                        }
+                    }, 200);
+
+                    const resultContainer = document.querySelector('#result-container');
+                    resultContainer.style.opacity = 0;
+                    setTimeout(() => {
+                        resultContainer.style.opacity = 1;
+                    }, 100);
+
+                    // Hide the upload button
+                    document.querySelector('#upload_button').style.display = 'none';
+
+                    // Display the result container
+                    document.querySelector('#result-container').style.display = 'block';
+
+                    // Display the uploaded image
+                    const image = document.querySelector('#uploaded-image');
+                    const imageURL = URL.createObjectURL(file);
+                    image.src = imageURL;
+
+                    // Display the information
+                    const info = document.querySelector('#image-info');
+                    info.innerHTML = `
+                              Pathological Condition: <span class="result-text">${data.result.condition} </span><br>
+                              <h6 class="result-text">${data.result.condition_description}</h6><br>
+                              Gender: <span class="result-text">${data.result.gender}</span><br>
+                              Age: <span class="result-text">${data.result.age}</span><br>
+                              Viewing position: <span class="result-text">${data.result.viewing_position}</span>
+                            `;
+
+                    // Show the re-upload button
+                    document.querySelector('#reupload_button').style.display = 'block';
+                } else {
+                    clearInterval(progressInterval);
+                    loadingBar.style.display = 'none';
+
+                    alert(`Error: ${data.error}`);
+                }
+            });
+            xhr.send(formData);
+        }
+    }
 
 
-                  .then(response => response.json())
-                  .then(data => {
-                    if (data.result) {
-                      // Hide the upload button
-                      document.querySelector('#upload_button').style.display = 'none';
+    document.querySelector('#reupload_button').addEventListener('click', function () {
+        const resultContainer = document.querySelector('#result-container');
+        resultContainer.classList.remove('fade-in');
+        setTimeout(() => {
+            resultContainer.classList.add('fade-in');
+        }, 100);
 
-                      // Display the result container
-                      document.querySelector('#result-container').style.display = 'block';
+        // Reset the input element
+        document.querySelector('#xray_image').value = '';
 
-                      // Display the uploaded image
-                      const image = document.querySelector('#uploaded-image');
-                      const imageURL = URL.createObjectURL(file);
-                      image.src = imageURL;
+        // Hide the result container
+        document.querySelector('#result-container').style.display = 'none';
 
-                      // Display the information
-                      const info = document.querySelector('#image-info');
-                      info.innerHTML = `
-                        Pathological Condition: ${data.result.condition} (${data.result.description})<br>
-                        Gender: ${data.result.gender}<br>
-                        Age: ${data.result.age}<br>
-                        Viewing position: ${data.result.viewing_position}
-                      `;
+        // Hide the re-upload button
+        document.querySelector('#reupload_button').style.display = 'none';
 
-                      // Show the re-upload button
-                      document.querySelector('#reupload_button').style.display = 'block';
-                            } else {
-                              alert(`Error: ${data.error}`);
-                            }
-                          })
-                      }
-                    });
+        // Show the upload button
+        document.querySelector('#upload_button').style.display = 'block';
+    });
 
-                    // Handle the click event on the "Re-Upload" button
-                    document.querySelector('#reupload_button').addEventListener('click', function () {
-                      // Reset the input element
-                      document.querySelector('#xray_image').value = '';
+    const dragDropZone = document.querySelector('.drag-drop-zone');
+    const xrayImageInput = document.querySelector('#xray_image');
 
-                      // Hide the result container
-                      document.querySelector('#result-container').style.display = 'none';
+    dragDropZone.addEventListener('click', () => {
+        xrayImageInput.click();
+    });
 
-                      // Hide the re-upload button
-                      document.querySelector('#reupload_button').style.display = 'none';
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dragDropZone.addEventListener(eventName, (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+    });
 
-                      // Show the upload button
-                      document.querySelector('#upload_button').style.display = 'block';
-                    });
-    </script>
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dragDropZone.addEventListener(eventName, () => {
+            dragDropZone.classList.add('drag-over');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dragDropZone.addEventListener(eventName, () => {
+            dragDropZone.classList.remove('drag-over');
+        });
+    });
+
+    dragDropZone.addEventListener('drop', (event) => {
+        const file = event.dataTransfer.files[0];
+        if (file) {
+            xrayImageInput.files = event.dataTransfer.files;
+            // Call the handleFileUpload function
+            handleFileUpload({target: xrayImageInput});
+        }
+    });
+
+</script>
 </body>
 </html>
