@@ -14,15 +14,13 @@ The models were implemented as a web application using HTML, CSS, and JavaScript
 
 The project is hosted on Digital Ocean, which provided us with valuable learning experiences about cloud server management, security, and deployments. Our journey with Python version management was particularly insightful. Given that our models were Python version-specific, we needed to ensure the correct version of Python (3.8.10) was installed and available. We encountered challenges initially but overcame them by setting up a virtual environment (venv) using pyenv. This isolated environment allowed us to work with the required Python version without conflicts.
 
+We used the Flask framework to develop the backend of our application. Flask's simplicity and flexibility allowed us to set up a web-based API that managed the execution environment for our models. In our Flask application, we defined routes for image upload and implemented methods to serve model predictions. We also ensured secure handling of image files. The predictions were generated using multiple models (pathological condition, gender, age, and viewing position classifiers) from the fastai library, which were loaded into the application at startup. These predictions were then returned to the client as a JSON response.
+
 An additional major challenge was handling the extensive dataset sourced from Kaggle. We initially attempted to use S3 for this purpose but were unsuccessful due to the time and processing requirements. Consequently, we condensed the dataset into a 30k image sample set, which accurately represents the original data.
 
 From configuring Python environments to managing firewall settings and understanding the essentials of web servers with Nginx, the application's deployment gave us real-world insights into server administration. We also worked with SSL certificates and domain mapping, redirecting the IP address to our chosen domain.
 
 Digital Ocean's robust and easy-to-use platform made it feasible to handle a high-traffic web application powered by AI models. Unfortunately, we had to terminate the live site as it used up our resources. However, feel free to browse through our demo [here]().
-
-Daniel Ching's work with Fast AI and the pathological models were fundamental resources for this project as they gave us a base to work off.
-
-One last thing we would like to address is the naming behind our project. Originally we went for the name X-Rai, but later wanted something easy to pronounce, something that would make you think of your friendly radiologist or doctor. And that is where HugoAi was born.
 
 ## Resources
 1. [National Institutes of Health Chest X-Ray Dataset](https://www.kaggle.com/datasets/nih-chest-xrays/data)
