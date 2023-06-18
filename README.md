@@ -19,7 +19,6 @@ Throughout this project, we utilized numerous resources for our AI models, serve
 8. [Nginx](https://nginx.org/en/): An HTTP and reverse proxy server.
 9. [HTML/CSS/JavaScript](https://developer.mozilla.org/en-US/docs/Learn): The frontend technologies used to design the web application.
 
-...
 
 ## Description
 This project was executed under the Artificial Intelligence Mentorship Program at the University of Texas at Dallas. Our team of seven members, comprising Shaik Hatim, Faris Shaik, Sanya Oak, Varun Raghuram, and Arrio Gonsalves, along with our mentors Anusha Saha and Poorna Bharanikumar, created four simple chest X-ray models. These models can detect pathological conditions, age, gender, and viewing positions. The project spanned over a six-week program where we delved into AI and Machine Learning.
