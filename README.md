@@ -42,7 +42,7 @@ The dataset features 15 classes: 14 diseases and one for "No findings". Images c
 2. Install the necessary dependencies listed in the `requirements.txt` file
 3. To interact with the server, use the following command:
     ```
-    ssh root@161.35.197.37
+    ssh root@192.168.0.1
     ```
 4. You can find additional server management commands in the [Server Commands](#server-commands) section.
 
