@@ -4,7 +4,6 @@
   <img width="863" alt="Screenshot 2023-06-18 at 19 43 24" src="https://github.com/Hteam121/HugoAi/assets/85576231/88412901-9244-43a8-9cf9-581b19425fb8">
 </p>
 
-...
 ## Resources Used
 
 Throughout this project, we utilized numerous resources for our AI models, server hosting, development environment, and others:
