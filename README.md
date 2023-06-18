@@ -17,6 +17,8 @@ Digital Ocean's robust and easy-to-use platform made it feasible to handle a hig
 
 Daniel Ching's work with Fast AI and the pathological models were fundamental resources for this project as they gave us a base to work off.
 
+One last thing we would like to address is the naming behind our project. Originally we went for the name X-Rai, but later wanted something easy to pronounce, something that would make you think of your friendly radiologist or doctor. And that is where HugoAi was born.
+
 ## Resources
 1. [National Institutes of Health Chest X-Ray Dataset](https://www.kaggle.com/datasets/nih-chest-xrays/data)
 2. [Multi-category Classification of Various Chest Conditions from Chest X-Rays](https://towardsdatascience.com/multi-category-classification-of-various-chest-conditions-from-chest-x-rays-1d6428522997)
@@ -50,7 +52,6 @@ Here are some useful terminal commands for managing the server:
 - Activating the virtual environment: `source bin/activate`
 - Installing dependencies: `pip3.8 install -r requirements.txt`
 - Activating the Python version for the project: `pyenv activate venv_3.8.10`
-- And more... (provide the rest of the commands as needed)
 
 ## Acknowledgments
 - [Shaik Hatim](https://www.linkedin.com/in/shaik-hatim/)
