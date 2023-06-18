@@ -1,6 +1,9 @@
 # HugoAi
 
-<img width="863" alt="Screenshot 2023-06-18 at 19 43 24" src="https://github.com/Hteam121/HugoAi/assets/85576231/88412901-9244-43a8-9cf9-581b19425fb8">
+<p align="center">
+  <img width="863" alt="Screenshot 2023-06-18 at 19 43 24" src="https://github.com/Hteam121/HugoAi/assets/85576231/88412901-9244-43a8-9cf9-581b19425fb8">
+</p>
+
 
 ## Description
 This project was executed under the Artificial Intelligence Mentorship Program at the University of Texas at Dallas. Our team of seven members, comprising Shaik Hatim, Faris Shaik, Sanya Oak, Varun Raghuram, and Arrio Gonsalves, along with our mentors Anusha Saha and Poorna Bharanikumar, created four simple chest X-ray models. These models can detect pathological conditions, age, gender, and viewing positions. The project spanned over a six-week program where we delved into AI and Machine Learning.
